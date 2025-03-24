@@ -50,7 +50,7 @@ class SummaryView(APIView):
     def get(self, request):
 
         user = self.request.user
-        month = request.query_params.get("month")
+        month = self.request.query_params.get("month")
         transactions = Transaction.objects.filter(user=user)
         # Filter by month if provided
         if month:
@@ -58,13 +58,13 @@ class SummaryView(APIView):
             transactions = transactions.filter(date__year=year, date__month=month)
 
         total_income = (
-            transactions.filter(transaction="income").aaggregate(Sum("amount"))[
+            transactions.filter(transaction="income").aggregate(Sum("amount"))[
                 "amount__sum"
             ]
             or 0
         )
         total_expenses = (
-            transactions.filter(transaction="expense").aaggregate(Sum("amount"))[
+            transactions.filter(transaction="expense").aggregate(Sum("amount"))[
                 "amount__sum"
             ]
             or 0
