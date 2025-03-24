@@ -3,3 +3,5 @@ djangorestframework
 requests
 psycopg[binary]
 djangorestframework-simplejwt
+drf-spectacular
+django-filter
