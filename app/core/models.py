@@ -2,6 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class UserProfile(models.Model):
+    """Model for user."""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    preferred_currency = models.CharField(max_length=3, default="USD")
+
+
 class Transaction(models.Model):
     """Model for transaction."""
 
@@ -29,5 +36,5 @@ class Budget(models.Model):
     limit = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.DateField()
 
-    class Mata:
+    class Meta:
         unique_together = ["user", "category", "month"]
