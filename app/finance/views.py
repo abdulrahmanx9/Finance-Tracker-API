@@ -70,7 +70,7 @@ class SummaryView(APIView):
             or 0
         )
         net = total_income - total_expenses
-        by_catagory = (
+        by_category = (
             transactions.filter(transaction="expense")
             .values("category")
             .annotate(total=Sum("amount"))
@@ -82,7 +82,7 @@ class SummaryView(APIView):
                 "total_expenses": total_expenses,
                 "net": net,
                 "by_catagory": {
-                    item["category"]: item["total"] for item in by_catagory
+                    item["category"]: item["total"] for item in by_category
                 },
                 "currency": "USD",
             }
