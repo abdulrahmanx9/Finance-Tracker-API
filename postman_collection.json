@@ -1,0 +1,1006 @@
+{
+    "info": {
+        "_postman_id": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+        "name": "Finance Tracker API",
+        "description": {
+            "content": "This collection provides a complete set of requests for interacting with the **Finance Tracker API**. It allows for managing personal budgets and transactions, secured with JWT-based authentication.\n\n### Quick Start & Setup\n\n1.  **Set the Base URL**: Before making any requests, ensure the `baseUrl` collection variable is correct. Click on the collection name (\"Finance Tracker API\"), go to the **Variables** tab, and change the **CURRENT VALUE** of `baseUrl` from `http://127.0.0.1:8000` to your API's host if it's different.\n\n2.  **Authentication Flow**: This collection automates the JWT authentication process.\n    * **Login**: Go to the `Authentication > Login and Get Tokens` request and update the body with your user's credentials.\n    * **Send Request**: Executing this request will trigger a script that automatically captures the `access` and `refresh` tokens and saves them to the `{{accessToken}}` and `{{refreshToken}}` collection variables.\n    * **Access Protected Routes**: You can now seamlessly call any protected endpoint (like `List Budgets` or `Create Transaction`). The required `Authorization: Bearer {{accessToken}}` header is automatically included in every request in this collection.",
+            "type": "text/markdown"
+        },
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "description": "Endpoints for user authentication and session management using JSON Web Tokens (JWT).",
+            "item": [
+                {
+                    "name": "Login and Get Tokens",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"accessToken\", jsonData.access);",
+                                    "    pm.collectionVariables.set(\"refreshToken\", jsonData.refresh);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"yourstrongpassword\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login",
+                                ""
+                            ]
+                        },
+                        "description": "Authenticates a user with their credentials and returns a pair of JWTs.\n\n* **Authentication**: None required.\n* **Automation**: On a successful login, a test script will **automatically** save the `access` and `refresh` tokens to the `{{accessToken}}` and `{{refreshToken}}` collection variables. This enables immediate access to protected endpoints."
+                    },
+                    "response": [
+                        {
+                            "name": "Login Successful",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"yourstrongpassword\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/login/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "login",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxNjM5ODg2NywiaWF0IjoxNzE2MzEyNDY3LCJqdGkiOiI4MmEyZGIxZTM1YTk0OTVkODJlY2U2YmZlM2MyOTlmMiIsInVzZXJfaWQiOjF9.uY6G1bA4Z3w8Q...\",\n    \"access\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2MzEyNzY3LCJpYXQiOjE3MTYzMTI0NjcsImp0aSI6ImM1NzM2NmVhNWM0ZjQ0NjRiYmU5YjdmZTQwY2E3Y2U5IiwidXNlcl9pZCI6MX0.aBcDeFg123...\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Refresh Access Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"accessToken\", jsonData.access);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"refresh\": \"{{refreshToken}}\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/token/refresh/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "token",
+                                "refresh",
+                                ""
+                            ]
+                        },
+                        "description": "Generates a new `accessToken` using a valid `refreshToken`. This is used when the original access token expires, preventing the user from having to log in again.\n\n* **Authentication**: None required, but a valid `refreshToken` must be provided.\n* **Automation**: The request body is pre-filled to use the `{{refreshToken}}` variable. On success, a script automatically updates the `{{accessToken}}` variable with the new token."
+                    },
+                    "response": [
+                        {
+                            "name": "Token Refreshed Successfully",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"refresh\": \"{{refreshToken}}\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/token/refresh/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "token",
+                                        "refresh",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"access\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2MzEzMDM4LCJpYXQiOjE3MTYzMTI3MzgsImp0aSI6ImFiYzEyM2RlZjQ1NiIsInVzZXJfaWQiOjF9.xYzAbCd456...\"\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Finance - Budgets",
+            "description": "Endpoints for managing monthly budgets for different spending categories.",
+            "item": [
+                {
+                    "name": "List Budgets",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/budget/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "budget",
+                                ""
+                            ]
+                        },
+                        "description": "Retrieves a list of all budgets created by the authenticated user.\n\n* **Authentication**: **Required**."
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/budget/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "budget",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 1,\n        \"spent\": \"150.75\",\n        \"remaining\": \"349.25\",\n        \"category\": \"Groceries\",\n        \"limit\": \"500.00\",\n        \"month\": \"2025-10-01\",\n        \"user\": 1\n    },\n    {\n        \"id\": 2,\n        \"spent\": \"80.00\",\n        \"remaining\": \"120.00\",\n        \"category\": \"Dining\",\n        \"limit\": \"200.00\",\n        \"month\": \"2025-10-01\",\n        \"user\": 1\n    }\n]"
+                        }
+                    ]
+                },
+                {
+                    "name": "Create New Budget",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"category\": \"Entertainment\",\n    \"limit\": \"150.00\",\n    \"month\": \"2025-10-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/budget/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "budget",
+                                ""
+                            ]
+                        },
+                        "description": "Creates a new monthly budget for a specific category.\n\n* **Authentication**: **Required**.\n* **Request Body**: `category`, `limit`, and `month` are required fields. The `month` should be the first day of the desired month (e.g., 'YYYY-MM-01')."
+                    },
+                    "response": [
+                        {
+                            "name": "Budget Created",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"category\": \"Entertainment\",\n    \"limit\": \"150.00\",\n    \"month\": \"2025-10-01\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/budget/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "budget",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"id\": 3,\n    \"spent\": \"0.00\",\n    \"remaining\": \"150.00\",\n    \"category\": \"Entertainment\",\n    \"limit\": \"150.00\",\n    \"month\": \"2025-10-01\",\n    \"user\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Budget by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/budget/:budgetId/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "budget",
+                                ":budgetId",
+                                ""
+                            ],
+                            "variable": [
+                                {
+                                    "key": "budgetId",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves a single budget by its unique ID.\n\n* **Authentication**: **Required**.\n* **Path Variable**: Replace `:budgetId` in the URL with the actual ID of the budget you want to retrieve."
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/budget/1/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "budget",
+                                        "1",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"id\": 1,\n    \"spent\": \"150.75\",\n    \"remaining\": \"349.25\",\n    \"category\": \"Groceries\",\n    \"limit\": \"500.00\",\n    \"month\": \"2025-10-01\",\n    \"user\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Update Budget (PUT)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"category\": \"Groceries\",\n    \"limit\": \"550.00\",\n    \"month\": \"2025-10-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/budget/:budgetId/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "budget",
+                                ":budgetId",
+                                ""
+                            ],
+                            "variable": [
+                                {
+                                    "key": "budgetId",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Performs a full update on an existing budget. All fields must be provided in the request body.\n\n* **Authentication**: **Required**.\n* **Path Variable**: Replace `:budgetId` with the budget's ID."
+                    },
+                    "response": [
+                        {
+                            "name": "Budget Updated",
+                            "originalRequest": {
+                                "method": "PUT",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"category\": \"Groceries\",\n    \"limit\": \"550.00\",\n    \"month\": \"2025-10-01\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/budget/1/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "budget",
+                                        "1",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"id\": 1,\n    \"spent\": \"150.75\",\n    \"remaining\": \"399.25\",\n    \"category\": \"Groceries\",\n    \"limit\": \"550.00\",\n    \"month\": \"2025-10-01\",\n    \"user\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Partially Update Budget (PATCH)",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"limit\": \"600.00\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/budget/:budgetId/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "budget",
+                                ":budgetId",
+                                ""
+                            ],
+                            "variable": [
+                                {
+                                    "key": "budgetId",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "Performs a partial update on an existing budget. Only include the fields you wish to change in the request body.\n\n* **Authentication**: **Required**.\n* **Path Variable**: Replace `:budgetId` with the budget's ID."
+                    },
+                    "response": [
+                        {
+                            "name": "Budget Partially Updated",
+                            "originalRequest": {
+                                "method": "PATCH",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"limit\": \"600.00\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/budget/1/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "budget",
+                                        "1",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"id\": 1,\n    \"spent\": \"150.75\",\n    \"remaining\": \"449.25\",\n    \"category\": \"Groceries\",\n    \"limit\": \"600.00\",\n    \"month\": \"2025-10-01\",\n    \"user\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete Budget",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/budget/:budgetId/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "budget",
+                                ":budgetId",
+                                ""
+                            ],
+                            "variable": [
+                                {
+                                    "key": "budgetId",
+                                    "value": "3"
+                                }
+                            ]
+                        },
+                        "description": "Deletes a budget from the database. This action is permanent.\n\n* **Authentication**: **Required**.\n* **Path Variable**: Replace `:budgetId` with the ID of the budget to be deleted."
+                    },
+                    "response": [
+                        {
+                            "name": "Budget Deleted",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/budget/3/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "budget",
+                                        "3",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "No Content",
+                            "code": 204,
+                            "_postman_previewlanguage": "plain",
+                            "header": [],
+                            "cookie": [],
+                            "body": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Finance - Transactions",
+            "description": "Endpoints for managing individual income and expense transactions.",
+            "item": [
+                {
+                    "name": "List Transactions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/transaction/?category=&transaction=&date=",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "transaction",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "Groceries",
+                                    "disabled": true,
+                                    "description": "(Optional) Filter by an exact category name."
+                                },
+                                {
+                                    "key": "transaction",
+                                    "value": "expense",
+                                    "disabled": true,
+                                    "description": "(Optional) Filter by transaction type (`expense` or `income`)."
+                                },
+                                {
+                                    "key": "date",
+                                    "value": "2025-10-11",
+                                    "disabled": true,
+                                    "description": "(Optional) Filter by an exact date (YYYY-MM-DD)."
+                                }
+                            ]
+                        },
+                        "description": "Retrieves a list of all transactions for the authenticated user. This endpoint supports filtering.\n\n* **Authentication**: **Required**.\n\n### Query Parameters\n\n* `category` (string): Filter by the exact category name (e.g., `?category=Dining`).\n* `transaction` (string): Filter by type, either `expense` or `income`.\n* `date` (string): Filter by a specific date in `YYYY-MM-DD` format."
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/transaction/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "transaction",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 1,\n        \"converted_amount\": \"1200.00\",\n        \"converted_currency\": \"USD\",\n        \"amount\": \"1200.00\",\n        \"currency\": \"USD\",\n        \"category\": \"Salary\",\n        \"transaction\": \"income\",\n        \"date\": \"2025-10-11T12:00:00Z\",\n        \"description\": \"October paycheck\",\n        \"user\": 1\n    },\n    {\n        \"id\": 2,\n        \"converted_amount\": \"40.20\",\n        \"converted_currency\": \"USD\",\n        \"amount\": \"150.75\",\n        \"currency\": \"SAR\",\n        \"category\": \"Groceries\",\n        \"transaction\": \"expense\",\n        \"date\": \"2025-10-09T18:45:00Z\",\n        \"description\": \"Weekly grocery shopping\",\n        \"user\": 1\n    }\n]"
+                        }
+                    ]
+                },
+                {
+                    "name": "Create New Transaction",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"amount\": \"80.00\",\n    \"currency\": \"SAR\",\n    \"category\": \"Dining\",\n    \"transaction\": \"expense\",\n    \"date\": \"2025-10-11T13:15:00Z\",\n    \"description\": \"Lunch at local restaurant\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/transaction/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "transaction",
+                                ""
+                            ]
+                        },
+                        "description": "Creates a new transaction (income or expense).\n\n* **Authentication**: **Required**.\n* **Request Body**: Requires `amount`, `category`, `transaction` type, and `date`. `currency` and `description` are optional.\n* **Currency Conversion**: The `converted_amount` and `converted_currency` in the response will be automatically calculated based on the user's preferred currency setting."
+                    },
+                    "response": [
+                        {
+                            "name": "Transaction Created",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"amount\": \"80.00\",\n    \"currency\": \"SAR\",\n    \"category\": \"Dining\",\n    \"transaction\": \"expense\",\n    \"date\": \"2025-10-11T13:15:00Z\",\n    \"description\": \"Lunch at local restaurant\"\n}",
+                                    "options": {
+                                        "raw": {
+                                            "language": "json"
+                                        }
+                                    }
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/transaction/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "transaction",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "Created",
+                            "code": 201,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"id\": 3,\n    \"converted_amount\": \"21.33\",\n    \"converted_currency\": \"USD\",\n    \"amount\": \"80.00\",\n    \"currency\": \"SAR\",\n    \"category\": \"Dining\",\n    \"transaction\": \"expense\",\n    \"date\": \"2025-10-11T13:15:00Z\",\n    \"description\": \"Lunch at local restaurant\",\n    \"user\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Transaction by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/transaction/:transactionId/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "transaction",
+                                ":transactionId",
+                                ""
+                            ],
+                            "variable": [
+                                {
+                                    "key": "transactionId",
+                                    "value": "2"
+                                }
+                            ]
+                        },
+                        "description": "Retrieves a single transaction by its unique ID.\n\n* **Authentication**: **Required**.\n* **Path Variable**: Replace `:transactionId` in the URL with the actual ID of the transaction."
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/transaction/2/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "transaction",
+                                        "2",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"id\": 2,\n    \"converted_amount\": \"40.20\",\n    \"converted_currency\": \"USD\",\n    \"amount\": \"150.75\",\n    \"currency\": \"SAR\",\n    \"category\": \"Groceries\",\n    \"transaction\": \"expense\",\n    \"date\": \"2025-10-09T18:45:00Z\",\n    \"description\": \"Weekly grocery shopping\",\n    \"user\": 1\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Delete Transaction",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/transaction/:transactionId/",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "transaction",
+                                ":transactionId",
+                                ""
+                            ],
+                            "variable": [
+                                {
+                                    "key": "transactionId",
+                                    "value": "3"
+                                }
+                            ]
+                        },
+                        "description": "Deletes a transaction from the database. This action is permanent.\n\n* **Authentication**: **Required**.\n* **Path Variable**: Replace `:transactionId` with the ID of the transaction to delete."
+                    },
+                    "response": [
+                        {
+                            "name": "Transaction Deleted",
+                            "originalRequest": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/transaction/3/",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "transaction",
+                                        "3",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "No Content",
+                            "code": 204,
+                            "_postman_previewlanguage": "plain",
+                            "header": [],
+                            "cookie": [],
+                            "body": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Finance - Summary",
+            "description": "An endpoint that provides a consolidated financial overview.",
+            "item": [
+                {
+                    "name": "Get Finance Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/finance/summary/?month=2025-10",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "finance",
+                                "summary",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "month",
+                                    "value": "2025-10",
+                                    "description": "(Optional) Filter the summary for a specific month in YYYY-MM format. If omitted, provides a summary of all time."
+                                }
+                            ]
+                        },
+                        "description": "Retrieves a financial summary, including total income, total expenses, net balance, and a breakdown of expenses by category.\n\n* **Authentication**: **Required**.\n* **Query Parameter**: Use the optional `month` parameter (e.g., `?month=2025-10`) to scope the summary to a specific month."
+                    },
+                    "response": [
+                        {
+                            "name": "Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/finance/summary/?month=2025-10",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "finance",
+                                        "summary",
+                                        ""
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "month",
+                                            "value": "2025-10"
+                                        }
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"total_income\": 1200.00,\n    \"total_expenses\": 230.75,\n    \"net\": 969.25,\n    \"by_catagory\": {\n        \"Groceries\": 150.75,\n        \"Dining\": 80.00\n    },\n    \"currency\": \"USD\"\n}"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Get API Schema",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/schema/?format=json",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "schema",
+                        ""
+                    ],
+                    "query": [
+                        {
+                            "key": "format",
+                            "value": "json",
+                            "description": "Specify the output format. Can be `json` or `yaml`."
+                        }
+                    ]
+                },
+                "description": "Retrieves the OpenAPI 3 schema that defines this API. This is useful for generating client libraries or for API discovery."
+            },
+            "response": [
+                {
+                    "name": "Schema Retrieved",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/schema/?format=json",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "schema",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "format",
+                                    "value": "json"
+                                }
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/vnd.oai.openapi+json"
+                        }
+                    ],
+                    "cookie": [],
+                    "body": "{\n    \"openapi\": \"3.0.3\",\n    \"info\": {\n        \"title\": \"Finance Tracker API\",\n        \"version\": \"1.0.0\"\n    },\n    \"paths\": {\n        \"/api/login/\": {\n            \"post\": {\n                // ... schema content\n            }\n        }\n    }\n}"
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{accessToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://127.0.0.1:8000"
+        },
+        {
+            "key": "accessToken",
+            "value": ""
+        },
+        {
+            "key": "refreshToken",
+            "value": ""
+        }
+    ]
+}
